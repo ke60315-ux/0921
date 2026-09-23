@@ -42,22 +42,12 @@
         </div>
       </div>
 
-      <!-- 右側：日系座標、當日觀測時鐘與連線模式切換 -->
+      <!-- 右側：日系現在時刻 -->
       <div class="header-metadata">
-        <div class="meta-tag">
-          <span class="meta-title">觀測地點座標</span>
-          <span id="gpsReadout" class="meta-val font-en">24.08°N, 120.54°E</span>
-        </div>
         <div class="meta-tag time-tag">
           <span class="meta-title">現在時刻 (CST)</span>
           <span id="digitalClock" class="meta-val font-en">--:--:--</span>
         </div>
-        <button id="btnOpenApiModal" class="meta-tag connection-tag-btn" type="button" title="點擊設定 Cloudflare Worker 代理或 CWA 授權碼">
-          <span class="conn-dot-indicator dot-cached" id="connStatusDot"></span>
-          <span class="conn-tag-title">連線模式</span>
-          <span id="connStatusText" class="conn-tag-status">快照模式</span>
-          <span class="conn-tag-gear" aria-hidden="true">⚙️</span>
-        </button>
       </div>
     </header>
 
@@ -290,23 +280,6 @@
             <p class="state-sub">正在同步中央氣象署風土觀測紀錄，請稍候片刻</p>
           </div>
 
-          <!-- 3. Error 友善錯誤提示卡片 -->
-          <div id="errorCard" class="zen-card state-display-card error-state hidden" role="alert">
-            <div class="zen-error-seal">
-              <span>⚠</span>
-            </div>
-            <h3 class="state-head font-mincho">觀測訊號暫時中斷</h3>
-            <p id="errorMessage" class="state-sub">未能取得氣象署即時資料，請確認網路連線或 API Key 設定。</p>
-            
-            <div class="api-key-box" id="apiKeyInputBox">
-              <input type="text" id="customApiKeyInput" class="zen-input" placeholder="可在此貼上 CWA 授權碼 (CWA-XXXX...)" spellcheck="false" autocomplete="off" />
-              <button id="saveApiKeyBtn" class="zen-btn-primary" type="button">保存並連線</button>
-            </div>
-
-            <button id="retryBtn" class="zen-btn-ghost" type="button">
-              <span>重新連線讀取</span>
-            </button>
-          </div>
 
         </div>
       </section>
@@ -464,108 +437,7 @@
     </footer>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- Cloudflare Worker 與 CWA API 連線設定視窗 (Modal) -->
-  <!-- ================================================================= -->
-  <div id="apiSettingsModal" class="zen-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="zen-modal-card">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-hanko">☁️</span>
-          <div>
-            <h3 id="modalTitle" class="modal-title font-mincho">雲端代理與 API 連線設定</h3>
-            <p class="modal-subtitle">GitHub Pages + Cloudflare Worker + CWA API Key 最佳資安實踐</p>
-          </div>
-        </div>
-        <button id="btnCloseModal" class="modal-close-btn" type="button" aria-label="關閉視窗">&times;</button>
-      </div>
 
-      <div class="modal-body">
-        <!-- 狀態摘要條 -->
-        <div class="current-mode-status-bar">
-          <div class="status-left">
-            <span class="status-indicator-dot dot-cached" id="modalStatusDot"></span>
-            <span class="status-label-text">當前連線模式：</span>
-            <strong id="modalStatusText" class="status-active-val">預載快照模式 (免 Key)</strong>
-          </div>
-          <span class="status-speed-badge" id="modalSpeedBadge">⚡ 離線安全基準</span>
-        </div>
-
-        <!-- 選項 1：Cloudflare Worker (推薦) -->
-        <div class="settings-group recommended-group">
-          <div class="group-header">
-            <div class="group-title-row">
-              <span class="group-badge badge-cf">推薦首選</span>
-              <h4 class="group-title font-mincho">方案一：Cloudflare Worker 邊緣代理網址</h4>
-            </div>
-            <p class="group-desc">
-              金鑰加密保存在 Cloudflare 後台，前端 100% 絕不外洩；自動處理 CORS 並提供 10 分鐘邊緣極速快取。
-            </p>
-          </div>
-
-          <div class="input-with-action">
-            <input 
-              type="url" 
-              id="workerUrlInput" 
-              class="zen-modal-input" 
-              placeholder="https://cwa-weather-proxy.<子網域>.workers.dev" 
-              spellcheck="false" 
-              autocomplete="off"
-            />
-            <button id="btnTestWorker" class="zen-btn-primary" type="button">
-              <span>測試並儲存</span>
-            </button>
-          </div>
-          <div class="input-hint" id="workerTestFeedback">
-            💡 提示：部署完成後貼上您的 Worker 網址，點擊測試即可立即生效。
-          </div>
-        </div>
-
-        <!-- 分隔線 -->
-        <div class="modal-divider">
-          <span>或使用其他模式</span>
-        </div>
-
-        <!-- 選項 2：個人 CWA API 授權碼 -->
-        <div class="settings-group direct-key-group">
-          <div class="group-header">
-            <div class="group-title-row">
-              <span class="group-badge badge-cwa">直連模式</span>
-              <h4 class="group-title font-mincho">方案二：中央氣象署 CWA API 授權碼</h4>
-            </div>
-            <p class="group-desc">
-              僅儲存於您本地瀏覽器的 LocalStorage，直接連線氣象署開放資料平台。
-            </p>
-          </div>
-
-          <div class="input-with-action">
-            <input 
-              type="text" 
-              id="directApiKeyInput" 
-              class="zen-modal-input" 
-              placeholder="CWA-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" 
-              spellcheck="false" 
-              autocomplete="off"
-            />
-            <button id="btnSaveDirectKey" class="zen-btn-ghost" type="button">
-              <span>儲存授權碼</span>
-            </button>
-          </div>
-          <div class="input-hint" id="directKeyFeedback"></div>
-        </div>
-
-        <!-- 選項 3：重設/清除快取 -->
-        <div class="modal-footer-actions">
-          <button id="btnResetToSnapshot" class="zen-btn-text" type="button">
-            <span>🔄 重設為 GitHub Pages 預載快照模式</span>
-          </button>
-          <a href="./cloudflare-worker/README.md" target="_blank" class="zen-link-guide">
-            <span>📖 查看 3 分鐘 Cloudflare Worker 部署指南 ↗</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Leaflet GIS Map JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

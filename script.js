@@ -417,16 +417,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. 狀態管理 (Normal / Loading / Error)
   function showState(state) {
-    weatherCard.classList.add('hidden');
-    loadingCard.classList.add('hidden');
-    errorCard.classList.add('hidden');
+    if (weatherCard) weatherCard.classList.add('hidden');
+    if (loadingCard) loadingCard.classList.add('hidden');
+    if (errorCard) errorCard.classList.add('hidden');
 
     if (state === 'loading') {
-      loadingCard.classList.remove('hidden');
+      if (loadingCard) loadingCard.classList.remove('hidden');
     } else if (state === 'error') {
-      errorCard.classList.remove('hidden');
+      if (errorCard) errorCard.classList.remove('hidden');
+      else if (weatherCard) weatherCard.classList.remove('hidden');
     } else {
-      weatherCard.classList.remove('hidden');
+      if (weatherCard) weatherCard.classList.remove('hidden');
     }
   }
 
