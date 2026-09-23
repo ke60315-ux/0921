@@ -1,0 +1,2177 @@
+/* ==========================================================================
+   臺灣氣象風土帖 - 日系簡約・暮らしの気象手帖 (Japanese Minimalist / Wabi-sabi)
+   ========================================================================== */
+
+:root {
+  /* 和風自然色彩體系 (Japanese Traditional Color Palette) */
+  --bg-washi: #faf8f5;
+  --bg-subtle: #f4f1ea;
+  --bg-card: #ffffff;
+  
+  --border-zen: #eae5dc;
+  --border-light: #f0ece3;
+  --border-hover: #cfdfd3;
+
+  /* 主色調：竹青・抹茶色 */
+  --zen-matcha: #45634e;
+  --zen-matcha-hover: #37503f;
+  --zen-matcha-light: #eaf1ec;
+  --zen-matcha-subtle: #f2f7f4;
+  --zen-matcha-text: #2f4937;
+
+  /* 朱紅・判子印章 (Hanko Red) */
+  --hanko-red: #c44536;
+  --hanko-red-light: #fceeee;
+  --hanko-red-border: #f3c9c4;
+
+  /* 露草・雨藍 (Muted Indigo) */
+  --zen-rain-blue: #476579;
+  --zen-rain-light: #edf3f7;
+  --zen-rain-bar: #678b9f;
+
+  /* 墨色層次 (Sumi Ink) */
+  --sumi-deep: #28322d;
+  --sumi-medium: #54645d;
+  --sumi-light: #889991;
+  --sumi-faint: #b4c2bb;
+
+  /* 字型體系 */
+  --font-mincho: 'Shippori Mincho', 'Noto Serif TC', Georgia, "Songti TC", serif;
+  --font-sans: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-en: 'Plus Jakarta Sans', sans-serif;
+
+  /* 圓角與陰影 */
+  --radius-journal: 18px;
+  --radius-card: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 9999px;
+
+  --shadow-washi: 0 6px 24px -2px rgba(65, 80, 72, 0.05),
+                  0 2px 6px -1px rgba(65, 80, 72, 0.03);
+  --shadow-hover: 0 10px 32px -2px rgba(65, 80, 72, 0.08),
+                  0 4px 10px -1px rgba(65, 80, 72, 0.04);
+  --shadow-hanko: 0 2px 8px rgba(196, 69, 54, 0.15);
+
+  --transition-zen: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 基本重置 */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.japanese-theme {
+  font-family: var(--font-sans);
+  background-color: var(--bg-washi);
+  color: var(--sumi-deep);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.25rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   背景氛圍：淡光暈與和風空氣感
+   ========================================================================== */
+
+.zen-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.zen-blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.65;
+}
+
+.blur-leaf {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #e4eee7 0%, rgba(244, 241, 234, 0) 70%);
+  top: -120px;
+  left: 5%;
+}
+
+.blur-sun {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #faeee1 0%, rgba(250, 248, 245, 0) 70%);
+  bottom: -150px;
+  right: 5%;
+}
+
+/* 字型工具類 */
+.font-mincho { font-family: var(--font-mincho); }
+.font-en { font-family: var(--font-en); }
+
+/* 主容器版面 */
+.app-layout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+/* ==========================================================================
+   1. 頂部標題區 (日系極簡・風土観測手帖)
+   ========================================================================== */
+
+.zen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-journal);
+  padding: 1.2rem 2rem;
+  box-shadow: var(--shadow-washi);
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* 朱紅和風判子印章 (Hanko Stamp) */
+.hanko-seal {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--hanko-red);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--hanko-red);
+  font-family: var(--font-mincho);
+  font-size: 0.725rem;
+  font-weight: 700;
+  line-height: 1.15;
+  background: var(--hanko-red-light);
+  box-shadow: var(--shadow-hanko);
+  user-select: none;
+  transform: rotate(-3deg);
+  transition: var(--transition-zen);
+}
+
+.hanko-seal:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.main-heading {
+  font-family: var(--font-mincho);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+}
+
+.sub-badge {
+  font-family: var(--font-mincho);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.05em;
+}
+
+.brand-desc {
+  font-size: 0.85rem;
+  color: var(--sumi-medium);
+  letter-spacing: 0.04em;
+  margin-top: 0.25rem;
+}
+
+/* 頂部右側元數據標籤 */
+.header-metadata {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.meta-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-align: right;
+}
+
+.meta-title {
+  font-size: 0.75rem;
+  color: var(--sumi-light);
+  letter-spacing: 0.03em;
+}
+
+.meta-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sumi-deep);
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   2. 主畫面雙欄：GIS 淺色紙感地圖 (左) + 氣象風土手帖 (右)
+   ========================================================================== */
+
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 1.35rem;
+  align-items: stretch;
+}
+
+/* 和風卡片基底 */
+.zen-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-journal);
+  box-shadow: var(--shadow-washi);
+  transition: var(--transition-zen);
+  position: relative;
+}
+
+.zen-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ==========================================================================
+   GIS 淺色紙感地圖視窗
+   ========================================================================== */
+
+.map-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.card-caption-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fdfbf9;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.caption-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mincho);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--sumi-deep);
+}
+
+.brush-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--zen-matcha);
+}
+
+.map-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.zen-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-washi);
+  border: 1px solid var(--border-zen);
+  color: var(--sumi-medium);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition-zen);
+}
+
+.zen-btn-sm svg {
+  width: 14px;
+  height: 14px;
+  color: var(--zen-matcha);
+}
+
+.zen-btn-sm:hover {
+  background: var(--zen-matcha-light);
+  border-color: var(--border-hover);
+  color: var(--zen-matcha-text);
+}
+
+/* 地圖視窗容器 */
+.map-frame-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 560px;
+  background-color: #f7f4ed;
+}
+
+.leaflet-map-target {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  background-color: #f7f4ed;
+}
+
+.map-floating-tip {
+  position: absolute;
+  bottom: 16px;
+  left: 18px;
+  z-index: 400;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-zen);
+  box-shadow: 0 4px 14px rgba(60, 75, 68, 0.08);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mincho);
+  font-size: 0.775rem;
+  color: var(--sumi-medium);
+  pointer-events: none;
+}
+
+.tip-icon {
+  font-size: 0.9rem;
+}
+
+/* Leaflet 和風淺色客製化 */
+.leaflet-container {
+  background-color: #f7f4ed !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-bar {
+  border: 1px solid var(--border-zen) !important;
+  box-shadow: 0 4px 14px rgba(60, 75, 68, 0.08) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+}
+
+.leaflet-bar a {
+  background-color: #ffffff !important;
+  color: var(--sumi-medium) !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+.leaflet-bar a:hover {
+  background-color: var(--zen-matcha-light) !important;
+  color: var(--zen-matcha-text) !important;
+}
+
+/* 和紙書籤地圖標記 (Custom Leaflet DivIcon) */
+.zen-station-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zen-station-marker:hover {
+  transform: translate(-50%, -108%) scale(1.06);
+  z-index: 9999 !important;
+}
+
+.marker-paper-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 12px rgba(60, 75, 68, 0.1);
+  white-space: nowrap;
+  transition: var(--transition-zen);
+}
+
+.marker-paper-tag.selected {
+  background: var(--zen-matcha-subtle);
+  border-color: var(--zen-matcha);
+  box-shadow: 0 4px 16px rgba(69, 99, 78, 0.2);
+}
+
+.marker-hanko-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--hanko-red);
+}
+
+.marker-paper-tag.selected .marker-hanko-dot {
+  background-color: var(--zen-matcha);
+}
+
+.marker-label {
+  font-family: var(--font-mincho);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sumi-deep);
+}
+
+.marker-temp-badge {
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-pill);
+}
+
+.marker-anchor-stem {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #ffffff;
+  filter: drop-shadow(0 2px 2px rgba(60, 75, 68, 0.08));
+}
+
+.marker-paper-tag.selected + .marker-anchor-stem {
+  border-top-color: var(--zen-matcha);
+}
+
+/* ==========================================================================
+   氣象風土手帖與控制欄 (右側)
+   ========================================================================== */
+
+.telemetry-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* 控制卡片 (分區選擇與按鈕) */
+.control-card {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: #ffffff;
+}
+
+.select-label-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zen-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mincho);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sumi-deep);
+}
+
+.hanko-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hanko-red);
+}
+
+.current-region-badge {
+  font-family: var(--font-mincho);
+  font-size: 0.725rem;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+.zen-select-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.select-pin-icon {
+  position: absolute;
+  left: 0.95rem;
+  width: 17px;
+  height: 17px;
+  color: var(--zen-matcha);
+  pointer-events: none;
+}
+
+.select-arrow-icon {
+  position: absolute;
+  right: 0.95rem;
+  width: 16px;
+  height: 16px;
+  color: var(--sumi-light);
+  pointer-events: none;
+}
+
+select#citySelect {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--sumi-deep);
+  background-color: var(--bg-washi);
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-card);
+  padding: 0.75rem 2.4rem 0.75rem 2.5rem;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition-zen);
+}
+
+select#citySelect optgroup {
+  background: #ffffff;
+  color: var(--zen-matcha);
+  font-weight: 700;
+}
+
+select#citySelect option {
+  background: #ffffff;
+  color: var(--sumi-deep);
+  font-weight: 500;
+  padding: 0.4rem;
+}
+
+select#citySelect:hover {
+  border-color: var(--zen-matcha);
+  background-color: #ffffff;
+}
+
+select#citySelect:focus {
+  border-color: var(--zen-matcha);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(69, 99, 78, 0.12);
+}
+
+.control-actions {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.zen-btn-primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: var(--zen-matcha);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-card);
+  padding: 0.7rem 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(69, 99, 78, 0.2);
+  transition: var(--transition-zen);
+}
+
+.zen-btn-primary:hover {
+  background: var(--zen-matcha-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(69, 99, 78, 0.25);
+}
+
+.zen-btn-primary svg {
+  width: 16px;
+  height: 16px;
+}
+
+.zen-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--sumi-light);
+  border: 1px dashed var(--border-zen);
+  font-family: var(--font-sans);
+  font-size: 0.825rem;
+  font-weight: 500;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: var(--transition-zen);
+}
+
+.zen-btn-ghost:hover {
+  color: var(--hanko-red);
+  border-color: var(--hanko-red-border);
+  background: var(--hanko-red-light);
+}
+
+/* ==========================================================================
+   風土手帖卡 (主天氣展示卡)
+   ========================================================================== */
+
+.weather-journal-card {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.15rem;
+}
+
+.header-main-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stamp-chip {
+  font-family: var(--font-mincho);
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: var(--hanko-red);
+  background: var(--hanko-red-light);
+  border: 1px solid var(--hanko-red-border);
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+.location-name {
+  font-size: 1.95rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.04em;
+}
+
+.record-timestamp {
+  font-size: 0.8rem;
+  color: var(--sumi-light);
+  background: var(--bg-washi);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-light);
+}
+
+/* 天氣核心主角區塊 */
+.journal-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fdfcf9;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  padding: 1.35rem 1.6rem;
+}
+
+.weather-summary-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.japanese-icon-box {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  border-radius: 16px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 12px rgba(60, 75, 68, 0.04);
+}
+
+.japanese-icon-box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.phenomenon-desc-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.phenomenon-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+}
+
+.phenomenon-text {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.02em;
+}
+
+.kanji-sub {
+  font-family: var(--font-mincho);
+  font-size: 0.85rem;
+  color: var(--sumi-medium);
+}
+
+.zen-comfort-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-mincho);
+  font-size: 0.775rem;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+}
+
+/* 大字體氣溫 */
+.journal-temp-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.temp-headline {
+  display: flex;
+  align-items: baseline;
+  line-height: 1;
+}
+
+.temp-huge {
+  font-size: 3.25rem;
+  font-weight: 700;
+  color: var(--zen-matcha);
+  letter-spacing: -0.03em;
+}
+
+.temp-unit {
+  font-family: var(--font-mincho);
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--zen-matcha);
+  margin-left: 0.2rem;
+}
+
+.temp-subrange {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+}
+
+.subrange-label {
+  font-family: var(--font-mincho);
+  font-size: 0.7rem;
+  color: var(--sumi-light);
+}
+
+.subrange-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+}
+
+/* 4 格風土指標卡 */
+.zen-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.metric-card {
+  background: #fdfbf8;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: var(--transition-zen);
+}
+
+.metric-card:hover {
+  background: #ffffff;
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-washi);
+}
+
+.m-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.m-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sumi-medium);
+}
+
+.m-badge {
+  font-size: 0.7rem;
+  color: var(--sumi-light);
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-pill);
+}
+
+.m-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rain-val-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.m-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+}
+
+.m-status-text {
+  font-size: 0.775rem;
+  color: var(--sumi-light);
+}
+
+/* 降雨量水滴進度條 */
+.zen-progress-track {
+  width: 100%;
+  height: 5px;
+  background: #e9eff2;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-top: 0.2rem;
+}
+
+.zen-progress-bar {
+  height: 100%;
+  background: var(--zen-rain-bar);
+  border-radius: var(--radius-pill);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   風土活動適宜度指南 (日々の運動・暮らしの目安)
+   ========================================================================== */
+
+/* ==========================================================================
+   風土活動適宜度大看板 (大型擴展展示版面)
+   ========================================================================== */
+
+.activity-showcase-card {
+  padding: 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #ffffff;
+}
+
+.showcase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.showcase-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.showcase-hanko-seal {
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--hanko-red);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--hanko-red);
+  font-family: var(--font-mincho);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  background: var(--hanko-red-light);
+  box-shadow: var(--shadow-hanko);
+  flex-shrink: 0;
+}
+
+.showcase-headings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.showcase-main-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.showcase-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.04em;
+}
+
+.showcase-tag {
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+}
+
+.showcase-subtitle {
+  font-size: 0.875rem;
+  color: var(--sumi-medium);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+
+.showcase-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-badge {
+  font-family: var(--font-mincho);
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+}
+
+/* 4 大活動卡大網格 */
+.activity-large-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.activity-card-large {
+  background: #fdfcf9;
+  border: 1px solid var(--border-light);
+  border-top: 4px solid var(--border-zen);
+  border-radius: var(--radius-card);
+  padding: 1.5rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  transition: var(--transition-zen);
+  box-shadow: 0 4px 16px rgba(65, 80, 72, 0.04);
+}
+
+.activity-card-large:hover {
+  background: #ffffff;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.activity-card-large.status-ideal {
+  border-top-color: var(--zen-matcha);
+}
+
+.activity-card-large.status-caution {
+  border-top-color: #b8863b;
+}
+
+.activity-card-large.status-avoid {
+  border-top-color: var(--hanko-red);
+}
+
+.card-top-identity {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.icon-and-naming {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.sport-icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  box-shadow: 0 4px 12px rgba(60, 75, 68, 0.06);
+  flex-shrink: 0;
+}
+
+.sport-name-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sport-primary-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.03em;
+}
+
+.sport-sub-name {
+  font-family: var(--font-mincho);
+  font-size: 0.775rem;
+  color: var(--sumi-light);
+}
+
+.activity-badge {
+  font-family: var(--font-mincho);
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.badge-ideal {
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+}
+
+.badge-caution {
+  color: #8c5d17;
+  background: #fcf5ec;
+  border: 1px solid #f2e0c8;
+}
+
+.badge-avoid {
+  color: var(--hanko-red);
+  background: var(--hanko-red-light);
+  border: 1px solid var(--hanko-red-border);
+}
+
+/* 指數評分條 */
+.score-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-sm);
+}
+
+.score-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.score-title {
+  font-family: var(--font-mincho);
+  font-size: 0.75rem;
+  color: var(--sumi-medium);
+}
+
+.score-figure {
+  font-family: var(--font-en);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+}
+
+.score-denominator {
+  font-size: 0.8rem;
+  color: var(--sumi-light);
+  font-weight: normal;
+}
+
+.score-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #ebe7df;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.score-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fill-ideal { background: var(--zen-matcha); }
+.fill-caution { background: #b8863b; }
+.fill-avoid { background: var(--hanko-red); }
+
+/* 氣象條件因素標籤群 */
+.factors-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.factor-chip {
+  font-size: 0.75rem;
+  color: var(--sumi-medium);
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+/* 生活建議段落 */
+.advice-box {
+  background: #fbf9f4;
+  border-left: 3px solid var(--border-zen);
+  padding: 0.75rem 0.85rem;
+  border-radius: 4px;
+}
+
+.status-ideal .advice-box { border-left-color: var(--zen-matcha); }
+.status-caution .advice-box { border-left-color: #b8863b; }
+.status-avoid .advice-box { border-left-color: var(--hanko-red); }
+
+.advice-text {
+  font-size: 0.85rem;
+  color: var(--sumi-deep);
+  line-height: 1.6;
+}
+
+/* 生活手帖頁尾小語 */
+.journal-footer {
+  text-align: center;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--border-zen);
+}
+
+.haiku-quote {
+  font-size: 0.875rem;
+  color: var(--sumi-medium);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   狀態卡片 (Loading & Error)
+   ========================================================================== */
+
+.state-display-card {
+  padding: 3.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 420px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 和風葉片載入動畫 */
+.zen-leaf-loader {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.zen-leaf {
+  font-size: 2.1rem;
+  animation: leafFloat 2.4s ease-in-out infinite;
+}
+
+.ripple-circle {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 2px solid var(--zen-matcha);
+  opacity: 0.3;
+  animation: rippleBreath 2s infinite ease-out;
+}
+
+.state-head {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  margin-bottom: 0.45rem;
+  letter-spacing: 0.04em;
+}
+
+.state-sub {
+  font-size: 0.9rem;
+  color: var(--sumi-medium);
+  max-width: 380px;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.zen-error-seal {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--hanko-red);
+  color: var(--hanko-red);
+  background: var(--hanko-red-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-hanko);
+}
+
+.api-key-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 1.25rem;
+}
+
+.zen-input {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--sumi-deep);
+  outline: none;
+  transition: var(--transition-zen);
+}
+
+.zen-input:focus {
+  border-color: var(--zen-matcha);
+  box-shadow: 0 0 0 3px rgba(69, 99, 78, 0.12);
+}
+
+/* ==========================================================================
+   頁尾
+   ========================================================================== */
+
+.zen-footer {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.footer-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-mincho);
+  font-size: 0.8rem;
+  color: var(--sumi-light);
+}
+
+.footer-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--hanko-red);
+  border-radius: 4px;
+  color: var(--hanko-red);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   動畫效果 (Keyframes)
+   ========================================================================== */
+
+@keyframes leafFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(12deg);
+  }
+}
+
+@keyframes rippleBreath {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   選地區看預報專區 (一天折線圖 + 一周預報表格)
+   ========================================================================== */
+
+.forecast-hub-card {
+  padding: 2rem 2.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #ffffff;
+}
+
+.forecast-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+
+.hub-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.hub-hanko-seal {
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--zen-matcha);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--zen-matcha);
+  font-family: var(--font-mincho);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  background: var(--zen-matcha-light);
+  box-shadow: 0 2px 6px rgba(69, 99, 78, 0.1);
+  flex-shrink: 0;
+}
+
+.hub-main-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.hub-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.04em;
+}
+
+.hub-region-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--zen-matcha-text);
+  background: var(--zen-matcha-light);
+  border: 1px solid var(--border-hover);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+}
+
+.hub-subtitle {
+  font-size: 0.875rem;
+  color: var(--sumi-medium);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  margin-top: 0.2rem;
+}
+
+/* 分區切換藥丸按鈕列 */
+.region-pills-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.region-pill {
+  font-family: var(--font-mincho);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--sumi-medium);
+  background: #fdfbf8;
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.95rem;
+  cursor: pointer;
+  transition: var(--transition-zen);
+}
+
+.region-pill:hover {
+  background: #ffffff;
+  border-color: var(--zen-matcha);
+  color: var(--zen-matcha-text);
+  transform: translateY(-1px);
+}
+
+.region-pill.active {
+  background: var(--zen-matcha);
+  color: #ffffff;
+  border-color: var(--zen-matcha);
+  box-shadow: 0 2px 8px rgba(69, 99, 78, 0.25);
+}
+
+/* 雙核心欄位 Grid */
+.forecast-content-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1.25fr;
+  gap: 1.5rem;
+}
+
+.forecast-panel {
+  background: #fdfcf9;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-card);
+  padding: 1.35rem 1.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 16px rgba(65, 80, 72, 0.03);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border-zen);
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panel-icon {
+  font-size: 1.2rem;
+}
+
+.panel-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  letter-spacing: 0.03em;
+}
+
+.panel-badge {
+  font-family: var(--font-mincho);
+  font-size: 0.75rem;
+  color: var(--sumi-medium);
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+}
+
+/* 溫度摘要 Chip */
+.chart-summary-bar {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.summary-chip {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid var(--border-zen);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chip-label {
+  font-family: var(--font-mincho);
+  font-size: 0.7rem;
+  color: var(--sumi-light);
+}
+
+.chip-val {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.chip-min .chip-val { color: #1E88E5; }
+.chip-max .chip-val { color: #E53935; }
+.chip-diff .chip-val { color: #b8863b; }
+
+/* SVG 折線圖容器 */
+.day-chart-svg-container {
+  width: 100%;
+  height: 190px;
+  position: relative;
+}
+
+.day-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-time-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--sumi-light);
+  padding: 0 0.5rem;
+  border-top: 1px solid var(--border-light);
+  padding-top: 0.4rem;
+}
+
+.chart-footer-note {
+  font-size: 0.75rem;
+  color: var(--sumi-light);
+  text-align: center;
+  background: #fbf9f4;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+}
+
+/* 一週表格樣式 */
+.weekly-table-wrapper {
+  overflow-x: auto;
+}
+
+.zen-weekly-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.zen-weekly-table th {
+  font-family: var(--font-mincho);
+  font-weight: 700;
+  color: var(--sumi-medium);
+  background: #f6f3ed;
+  padding: 0.65rem 0.45rem;
+  border-bottom: 2px solid var(--border-zen);
+  white-space: nowrap;
+}
+
+.zen-weekly-table td {
+  padding: 0.65rem 0.45rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--sumi-deep);
+  vertical-align: middle;
+}
+
+.zen-weekly-table tr:hover td {
+  background: #ffffff;
+}
+
+.table-date-cell {
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-date-sub {
+  font-size: 0.75rem;
+  color: var(--sumi-light);
+  display: block;
+}
+
+.table-wx-cell {
+  white-space: nowrap;
+}
+
+.table-temp-min {
+  color: #1E88E5;
+  font-weight: 700;
+  font-family: var(--font-en);
+}
+
+.table-temp-max {
+  color: #E53935;
+  font-weight: 700;
+  font-family: var(--font-en);
+}
+
+.table-temp-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 100px;
+}
+
+.table-temp-bar {
+  flex: 1;
+  height: 6px;
+  background: #eeebe3;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.table-temp-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(to right, #1E88E5, #b8863b, #E53935);
+}
+
+.table-pop-badge {
+  font-family: var(--font-en);
+  font-size: 0.775rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: #e8f4fd;
+  color: #1565C0;
+}
+
+/* ==========================================================================
+   RWD 響應式佈局
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .forecast-content-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .activity-large-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.15rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-frame-wrapper, .leaflet-map-target {
+    min-height: 420px;
+    height: 420px;
+  }
+}
+
+@media (max-width: 640px) {
+  body.japanese-theme {
+    padding: 1rem 0.75rem;
+  }
+
+  .zen-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .header-metadata {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .main-heading {
+    font-size: 1.45rem;
+  }
+
+  .map-frame-wrapper, .leaflet-map-target {
+    min-height: 350px;
+    height: 350px;
+  }
+
+  .journal-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .journal-temp-box {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .zen-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-showcase-card {
+    padding: 1.5rem 1.15rem;
+  }
+
+  .showcase-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .showcase-legend {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .activity-large-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .control-actions {
+    flex-direction: column;
+  }
+}
+
+/* ==========================================================================
+   Cloudflare Worker & 連線模式樣式
+   ========================================================================== */
+
+/* 頂部連線按鈕 */
+.connection-tag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  color: var(--sumi-deep);
+}
+
+.connection-tag-btn:hover {
+  border-color: var(--zen-matcha);
+  background: var(--zen-matcha-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.conn-tag-title {
+  font-size: 0.7rem;
+  color: var(--sumi-light);
+  letter-spacing: 0.04em;
+}
+
+.conn-tag-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sumi-deep);
+}
+
+.conn-tag-gear {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  transition: transform 0.3s ease;
+}
+
+.connection-tag-btn:hover .conn-tag-gear {
+  transform: rotate(45deg);
+  opacity: 1;
+}
+
+/* 狀態指示圓點 */
+.conn-dot-indicator, .status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dot-worker {
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.dot-direct {
+  background: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.dot-cached {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.dot-offline {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+/* 彈窗背景與卡片 */
+.zen-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(43, 40, 38, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.25rem;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.zen-modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.zen-modal-card {
+  background: #fdfcf9;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.zen-modal-backdrop.hidden .zen-modal-card {
+  transform: translateY(20px);
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  background: #f7f4ed;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.modal-hanko {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  margin: 0;
+}
+
+.modal-subtitle {
+  font-size: 0.775rem;
+  color: var(--sumi-medium);
+  margin-top: 0.15rem;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--sumi-light);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--sumi-deep);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* 狀態條 */
+.current-mode-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #f0f4f1;
+  border: 1px solid rgba(86, 125, 96, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-label-text {
+  color: var(--sumi-medium);
+}
+
+.status-active-val {
+  color: var(--sumi-deep);
+}
+
+.status-speed-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  color: var(--zen-matcha-text);
+}
+
+/* 設定群組 */
+.settings-group {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 1.15rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.settings-group:focus-within {
+  border-color: var(--zen-matcha);
+}
+
+.recommended-group {
+  border: 1.5px solid rgba(46, 125, 50, 0.35);
+  background: #fbfdfb;
+}
+
+.group-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.group-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.group-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.badge-cf {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffe0b2;
+}
+
+.badge-cwa {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #bbdefb;
+}
+
+.group-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--sumi-deep);
+  margin: 0;
+}
+
+.group-desc {
+  font-size: 0.8rem;
+  color: var(--sumi-medium);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.input-with-action {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.zen-modal-input {
+  flex: 1;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: #fdfdfd;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--sumi-deep);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.zen-modal-input:focus {
+  outline: none;
+  border-color: var(--zen-matcha);
+  box-shadow: 0 0 0 3px rgba(86, 125, 96, 0.15);
+}
+
+.input-hint {
+  font-size: 0.75rem;
+  color: var(--sumi-light);
+  line-height: 1.4;
+}
+
+.input-hint.success {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.input-hint.error {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.modal-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--sumi-light);
+  font-size: 0.75rem;
+}
+
+.modal-divider::before,
+.modal-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dashed var(--border-soft);
+}
+
+.modal-divider span {
+  padding: 0 0.75rem;
+}
+
+.modal-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.zen-btn-text {
+  background: none;
+  border: none;
+  color: var(--sumi-medium);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.3rem 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-family: inherit;
+}
+
+.zen-btn-text:hover {
+  color: var(--sumi-deep);
+}
+
+.zen-link-guide {
+  font-size: 0.8rem;
+  color: #0284c7;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.zen-link-guide:hover {
+  text-decoration: underline;
+}
+

@@ -1,0 +1,70 @@
+# ==========================================
+# 敏感金鑰與環境變數設定
+# ==========================================
+.env
+.env.*
+*.local
+secrets.json
+api_key.txt
+.streamlit/secrets.toml
+.wrangler/
+node_modules/
+
+# ==========================================
+# 本地 SQLite 資料庫 (由程式動態產生)
+# ==========================================
+*.db
+*.sqlite3
+
+# ==========================================
+# Python 編譯暫存與快取
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# Python 虛擬環境 (Virtual Environments)
+# ==========================================
+venv/
+env/
+ENV/
+.venv/
+env.bak/
+venv.bak/
+
+# ==========================================
+# IDE 與編輯器暫存
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# 作業系統暫存檔 (Windows & macOS)
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/

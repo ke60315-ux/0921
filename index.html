@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>臺灣氣象風土帖 - Taiwan Weather GIS</title>
+  
+  <!-- Leaflet GIS Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Google Fonts: 日系經典明朝體與質感黑體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@500;600;700&family=Shippori+Mincho:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="japanese-theme">
+  <!-- 和風背景柔光與浮雲氛圍 -->
+  <div class="zen-background" aria-hidden="true">
+    <div class="zen-blur blur-leaf"></div>
+    <div class="zen-blur blur-sun"></div>
+  </div>
+
+  <div class="app-layout">
+    
+    <!-- 1. 日系極簡頂部標題區 (日々の暮らし・風土観測) -->
+    <header class="zen-header">
+      <div class="brand-group">
+        <!-- 朱紅和風判子印章 -->
+        <div class="hanko-seal" title="中央氣象署即時觀測認定">
+          <span>氣象</span>
+          <span>手帖</span>
+        </div>
+        
+        <div class="brand-text">
+          <div class="title-row">
+            <h1 class="main-heading">臺灣氣象風土帖</h1>
+            <span class="sub-badge">GIS 観測日誌</span>
+          </div>
+          <p class="brand-desc">中央気象署リアルタイム観測・即時掌握台灣風土氣候</p>
+        </div>
+      </div>
+
+      <!-- 右側：日系座標、當日觀測時鐘與連線模式切換 -->
+      <div class="header-metadata">
+        <div class="meta-tag">
+          <span class="meta-title">觀測地點座標</span>
+          <span id="gpsReadout" class="meta-val font-en">24.08°N, 120.54°E</span>
+        </div>
+        <div class="meta-tag time-tag">
+          <span class="meta-title">現在時刻 (CST)</span>
+          <span id="digitalClock" class="meta-val font-en">--:--:--</span>
+        </div>
+        <button id="btnOpenApiModal" class="meta-tag connection-tag-btn" type="button" title="點擊設定 Cloudflare Worker 代理或 CWA 授權碼">
+          <span class="conn-dot-indicator dot-cached" id="connStatusDot"></span>
+          <span class="conn-tag-title">連線模式</span>
+          <span id="connStatusText" class="conn-tag-status">快照模式</span>
+          <span class="conn-tag-gear" aria-hidden="true">⚙️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. 主畫面雙欄：日系紙感 GIS 地圖 (左) + 氣象風土手帖卡 (右) -->
+    <main class="main-content-grid">
+      
+      <!-- [左側] GIS 淺色紙感地圖視窗 -->
+      <section class="gis-column" aria-label="臺灣風土 GIS 互動地圖">
+        <div class="zen-card map-card">
+          <div class="card-caption-bar">
+            <div class="caption-title">
+              <span class="brush-dot"></span>
+              <span>全島地理風土図 / GEOSPATIAL MAP</span>
+            </div>
+            
+            <div class="map-action-btns">
+              <button id="btnResetView" class="zen-btn-sm" type="button" title="重設為台灣全島鳥瞰視角">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span>全島鳥瞰</span>
+              </button>
+              <button id="btnToggleLayer" class="zen-btn-sm" type="button" title="切換和紙繪本 / 航空空照圖層">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <span id="layerNameText">航空空照</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 地圖本體容器 -->
+          <div class="map-frame-wrapper">
+            <div id="gisMap" class="leaflet-map-target" role="region" aria-label="台灣互動氣象地圖"></div>
+            
+            <div class="map-floating-tip">
+              <span class="tip-icon">🍃</span>
+              <span>點擊地圖標記・即時漫遊全島天候</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- [右側] 氣象手帖與控制選單 -->
+      <section class="telemetry-column" aria-label="氣象觀測詳情">
+        
+        <!-- 縣市分區選擇列 (中央氣象署官方分區) -->
+        <div class="zen-card control-card">
+          <div class="select-label-wrap">
+            <label for="citySelect" class="zen-field-label">
+              <span class="hanko-dot"></span>
+              <span>気象観測地を選択（氣象署分區）</span>
+            </label>
+            <span class="current-region-badge" id="regionBadge">中部地區</span>
+          </div>
+
+          <div class="zen-select-box">
+            <svg class="select-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <select id="citySelect" aria-label="選擇中央氣象署縣市觀測站">
+              <optgroup label="中部地區">
+                <option value="彰化縣" selected>彰化縣（預設・八卦山下）</option>
+                <option value="臺中市">臺中市</option>
+                <option value="南投縣">南投縣</option>
+                <option value="雲林縣">雲林縣</option>
+                <option value="嘉義市">嘉義市</option>
+                <option value="嘉義縣">嘉義縣</option>
+              </optgroup>
+              <optgroup label="北部地區">
+                <option value="基隆市">基隆市</option>
+                <option value="臺北市">臺北市</option>
+                <option value="新北市">新北市</option>
+                <option value="桃園市">桃園市</option>
+                <option value="新竹市">新竹市</option>
+                <option value="新竹縣">新竹縣</option>
+                <option value="苗栗縣">苗栗縣</option>
+              </optgroup>
+              <optgroup label="南部地區">
+                <option value="臺南市">臺南市</option>
+                <option value="高雄市">高雄市</option>
+                <option value="屏東縣">屏東縣</option>
+              </optgroup>
+              <optgroup label="東部地區">
+                <option value="宜蘭縣">宜蘭縣</option>
+                <option value="花蓮縣">花蓮縣</option>
+                <option value="臺東縣">臺東縣</option>
+              </optgroup>
+              <optgroup label="外島地區">
+                <option value="澎湖縣">澎湖縣</option>
+                <option value="金門縣">金門縣</option>
+                <option value="連江縣">連江縣</option>
+              </optgroup>
+            </select>
+            <svg class="select-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="control-actions">
+            <button id="refreshBtn" class="zen-btn-primary" type="button" title="向氣象署重新抓取最新資料">
+              <svg class="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+              <span>最新資料更新</span>
+            </button>
+            <button id="simulateErrorBtn" class="zen-btn-ghost" type="button" title="模擬連線異常狀態">
+              <span>模擬異常</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 數據展示容器 -->
+        <div class="details-display-wrapper">
+          
+          <!-- 1. 正常資料卡片 (和風氣象手帖) -->
+          <article id="weatherCard" class="zen-card weather-journal-card">
+            
+            <!-- 卡片頂部：縣市與觀測日誌標記 -->
+            <div class="journal-header">
+              <div class="header-main-info">
+                <span class="stamp-chip">観測点</span>
+                <h2 id="cityName" class="location-name font-mincho">彰化縣</h2>
+              </div>
+              <div id="updateTime" class="record-timestamp font-en">2026-09-22 12:00 ~ 18:00 (更新)</div>
+            </div>
+
+            <!-- 核心天氣視覺：日系線條圖示 + 標題現象 + 氣溫 -->
+            <div class="journal-hero">
+              <div class="weather-summary-wrap">
+                <div id="weatherIconContainer" class="japanese-icon-box">
+                  <!-- 動態注入和風向量圖示 -->
+                </div>
+                <div class="phenomenon-desc-wrap">
+                  <div class="phenomenon-title-row">
+                    <span id="weatherPhenomenon" class="phenomenon-text font-mincho">多雲時晴</span>
+                    <span class="kanji-sub" id="kanjiSub">雲がちの晴れ</span>
+                  </div>
+                  <span id="comfortBadge" class="zen-comfort-tag">快適・過ごしやすい</span>
+                </div>
+              </div>
+
+              <div class="journal-temp-box">
+                <div class="temp-headline">
+                  <span id="maxTemp" class="temp-huge font-mincho">32</span>
+                  <span class="temp-unit">°C</span>
+                </div>
+                <div class="temp-subrange font-en">
+                  <span class="subrange-label">本日予想</span>
+                  <span class="subrange-val"><span id="minTemp">29°</span> ~ <span id="maxTempSecondary">32°C</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 格和風風土指標網格 -->
+            <div class="zen-metrics-grid">
+              
+              <!-- 降雨機率 -->
+              <div class="metric-card rain-card">
+                <div class="m-card-header">
+                  <span class="m-label font-mincho">降雨確率 (PoP)</span>
+                  <span class="m-badge">雨傘目安</span>
+                </div>
+                <div class="m-card-body">
+                  <div class="rain-val-row">
+                    <span id="rainProb" class="m-value font-en">0%</span>
+                    <span class="m-status-text" id="rainStatusText">雨の心配なし</span>
+                  </div>
+                  <div class="zen-progress-track">
+                    <div id="rainProgressBar" class="zen-progress-bar" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 舒適度評價 -->
+              <div class="metric-card comfort-card">
+                <div class="m-card-header">
+                  <span class="m-label font-mincho">体感舒適度 (CI)</span>
+                  <span class="m-badge">服装の目安</span>
+                </div>
+                <div class="m-card-body">
+                  <span id="comfortText" class="m-value font-mincho">悶熱</span>
+                  <span class="m-status-text">水分補給・涼しい服装で</span>
+                </div>
+              </div>
+
+              <!-- 最低氣溫 -->
+              <div class="metric-card temp-min-card">
+                <div class="m-card-header">
+                  <span class="m-label font-mincho">最低気温 (MinT)</span>
+                  <span class="m-badge">朝晩の冷え</span>
+                </div>
+                <div class="m-card-body">
+                  <span id="minTempDetail" class="m-value font-en">29°C</span>
+                  <span class="m-status-text">朝方の最低水準</span>
+                </div>
+              </div>
+
+              <!-- 最高氣溫 -->
+              <div class="metric-card temp-max-card">
+                <div class="m-card-header">
+                  <span class="m-label font-mincho">最高気温 (MaxT)</span>
+                  <span class="m-badge">日中の暑さ</span>
+                </div>
+                <div class="m-card-body">
+                  <span id="maxTempDetail" class="m-value font-en">32°C</span>
+                  <span class="m-status-text">午後の陽気ピーク</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 卡片底部署名與生活俳句小語 -->
+            <footer class="journal-footer">
+              <p class="haiku-quote font-mincho" id="zenQuote">「日日是好日。風が渡り、雲が流れる。自然の巡りとともに。」</p>
+            </footer>
+          </article>
+
+          <!-- 2. Loading 狀態卡片 (和風旋轉葉片) -->
+          <div id="loadingCard" class="zen-card state-display-card loading-state hidden" aria-live="polite" aria-busy="true">
+            <div class="zen-leaf-loader">
+              <span class="zen-leaf">🍃</span>
+              <div class="ripple-circle"></div>
+            </div>
+            <h3 class="state-head font-mincho">気象データを読み込み中...</h3>
+            <p class="state-sub">正在同步中央氣象署風土觀測紀錄，請稍候片刻</p>
+          </div>
+
+          <!-- 3. Error 友善錯誤提示卡片 -->
+          <div id="errorCard" class="zen-card state-display-card error-state hidden" role="alert">
+            <div class="zen-error-seal">
+              <span>⚠</span>
+            </div>
+            <h3 class="state-head font-mincho">觀測訊號暫時中斷</h3>
+            <p id="errorMessage" class="state-sub">未能取得氣象署即時資料，請確認網路連線或 API Key 設定。</p>
+            
+            <div class="api-key-box" id="apiKeyInputBox">
+              <input type="text" id="customApiKeyInput" class="zen-input" placeholder="可在此貼上 CWA 授權碼 (CWA-XXXX...)" spellcheck="false" autocomplete="off" />
+              <button id="saveApiKeyBtn" class="zen-btn-primary" type="button">保存並連線</button>
+            </div>
+
+            <button id="retryBtn" class="zen-btn-ghost" type="button">
+              <span>重新連線讀取</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- [新增專區] 選地區看預報：一天溫度預測折線圖 + 一周溫度顯示用表格 -->
+    <!-- ================================================================= -->
+    <section class="zen-card forecast-hub-card" aria-label="選地區看預報專區">
+      <!-- 頂部標題與分區快速選單 (步驟 13 & 16) -->
+      <div class="forecast-hub-header">
+        <div class="hub-title-wrap">
+          <div class="hub-hanko-seal">
+            <span>預報</span>
+            <span>專區</span>
+          </div>
+          <div>
+            <div class="hub-main-row">
+              <h2 class="hub-title font-mincho">選地區看預報・一天氣溫走勢與一週預報手帖</h2>
+              <span class="hub-region-tag" id="hubCurrentRegionTag">中部地區・彰化縣</span>
+            </div>
+            <p class="hub-subtitle">依據中央氣象署最新遙測數據，即時呈現「當日 24 小時氣溫折線圖」與「未來 7 天一週氣溫表格」</p>
+          </div>
+        </div>
+
+        <!-- 分區快速切換按鈕列 -->
+        <div class="region-pills-bar" id="regionPillsBar">
+          <button type="button" class="region-pill active" data-region="中部地區" data-city="彰化縣">中部地區</button>
+          <button type="button" class="region-pill" data-region="北部地區" data-city="臺北市">北部地區</button>
+          <button type="button" class="region-pill" data-region="南部地區" data-city="高雄市">南部地區</button>
+          <button type="button" class="region-pill" data-region="東北部地區" data-city="宜蘭縣">東北部地區</button>
+          <button type="button" class="region-pill" data-region="東部地區" data-city="花蓮縣">東部地區</button>
+          <button type="button" class="region-pill" data-region="東南部地區" data-city="臺東縣">東南部地區</button>
+        </div>
+      </div>
+
+      <!-- 雙核心欄位：左側「一天溫度預測折線圖」，右側「一周溫度顯示用表格」 -->
+      <div class="forecast-content-grid">
+        
+        <!-- 1. 一天溫度預測折線圖 (24 小時走勢) (步驟 14) -->
+        <div class="forecast-panel chart-panel">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">📈</span>
+              <h3 class="panel-heading font-mincho">一天溫度預測折線圖 (24小時變化)</h3>
+            </div>
+            <span class="panel-badge" id="chartCityBadge">彰化縣・本日預測</span>
+          </div>
+          
+          <div class="chart-summary-bar">
+            <div class="summary-chip chip-min">
+              <span class="chip-label">今日最低溫</span>
+              <span class="chip-val font-en" id="dayChartMinT">--°C</span>
+            </div>
+            <div class="summary-chip chip-max">
+              <span class="chip-label">今日最高溫</span>
+              <span class="chip-val font-en" id="dayChartMaxT">--°C</span>
+            </div>
+            <div class="summary-chip chip-diff">
+              <span class="chip-label">日夜預期溫差</span>
+              <span class="chip-val font-en" id="dayChartDiffT">--°C</span>
+            </div>
+          </div>
+
+          <!-- 互動式 SVG 溫度折線圖容器 -->
+          <div class="day-chart-svg-container" id="dayChartContainer">
+            <!-- 由 JavaScript 動態生成平滑曲線、節點、溫度標籤與漸層 -->
+          </div>
+          
+          <div class="chart-time-labels font-en">
+            <span>00:00</span>
+            <span>03:00</span>
+            <span>06:00</span>
+            <span>09:00</span>
+            <span>12:00</span>
+            <span>15:00</span>
+            <span>18:00</span>
+            <span>21:00</span>
+            <span>24:00</span>
+          </div>
+          <div class="chart-footer-note">
+            <span>💡 提示：日間約 13:00~14:00 達最高溫，清晨約 05:00~06:00 為最低溫</span>
+          </div>
+        </div>
+
+        <!-- 2. 一周溫度顯示用表格 (7 天預報) (步驟 15) -->
+        <div class="forecast-panel table-panel">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <span class="panel-icon">📅</span>
+              <h3 class="panel-heading font-mincho">一周溫度顯示用表格 (未來7日)</h3>
+            </div>
+            <span class="panel-badge" id="tableCityBadge">彰化縣・一週概況</span>
+          </div>
+
+          <div class="weekly-table-wrapper">
+            <table class="zen-weekly-table" id="weeklyForecastTable">
+              <thead>
+                <tr>
+                  <th>預報日期</th>
+                  <th>天候現象</th>
+                  <th>最低溫</th>
+                  <th>最高溫</th>
+                  <th>氣溫視覺區間</th>
+                  <th>降雨機率</th>
+                </tr>
+              </thead>
+              <tbody id="weeklyTableBody">
+                <!-- 由 JavaScript 動態生成 7 天表格資料 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- [放大版面] 風土活動適宜度大看板 (全寬獨立大型看板) -->
+    <section class="zen-card activity-showcase-card" aria-label="風土活動適宜度大看板">
+      <div class="showcase-header">
+        <div class="showcase-title-wrap">
+          <div class="showcase-hanko-seal">
+            <span>活動</span>
+            <span>指南</span>
+          </div>
+          <div class="showcase-headings">
+            <div class="showcase-main-row">
+              <h2 class="showcase-title font-mincho">風土活動指南・本日戶外運動適宜度評鑑</h2>
+              <span class="showcase-tag font-mincho" id="showcaseCityTag">彰化縣 即時運算</span>
+            </div>
+            <p class="showcase-subtitle">結合中央氣象署最新氣溫、降雨機率、天候雷雨現象與體感指數，為您的慢跑、登山、游泳與戶外休閒提供最適建議</p>
+          </div>
+        </div>
+
+        <div class="showcase-legend">
+          <span class="legend-badge badge-ideal">🌸 最適（推薦）</span>
+          <span class="legend-badge badge-caution">🌿 注意（防護）</span>
+          <span class="legend-badge badge-avoid">⚠️ 回避（不宜）</span>
+        </div>
+      </div>
+
+      <!-- 4 大活動大型卡片網格 (慢跑、登山、游泳、戶外踏青) -->
+      <div class="activity-large-grid" id="activityGrid">
+        <!-- 由 JavaScript 動態依當前氣象即時產生 -->
+      </div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="zen-footer">
+      <div class="footer-inner">
+        <span class="footer-seal">和</span>
+        <p>臺灣氣象風土手帖 © 2026 ・ 資料來源：中華民國交通部中央氣象署 (CWA Open Data)</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- Cloudflare Worker 與 CWA API 連線設定視窗 (Modal) -->
+  <!-- ================================================================= -->
+  <div id="apiSettingsModal" class="zen-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="zen-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-hanko">☁️</span>
+          <div>
+            <h3 id="modalTitle" class="modal-title font-mincho">雲端代理與 API 連線設定</h3>
+            <p class="modal-subtitle">GitHub Pages + Cloudflare Worker + CWA API Key 最佳資安實踐</p>
+          </div>
+        </div>
+        <button id="btnCloseModal" class="modal-close-btn" type="button" aria-label="關閉視窗">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 狀態摘要條 -->
+        <div class="current-mode-status-bar">
+          <div class="status-left">
+            <span class="status-indicator-dot dot-cached" id="modalStatusDot"></span>
+            <span class="status-label-text">當前連線模式：</span>
+            <strong id="modalStatusText" class="status-active-val">預載快照模式 (免 Key)</strong>
+          </div>
+          <span class="status-speed-badge" id="modalSpeedBadge">⚡ 離線安全基準</span>
+        </div>
+
+        <!-- 選項 1：Cloudflare Worker (推薦) -->
+        <div class="settings-group recommended-group">
+          <div class="group-header">
+            <div class="group-title-row">
+              <span class="group-badge badge-cf">推薦首選</span>
+              <h4 class="group-title font-mincho">方案一：Cloudflare Worker 邊緣代理網址</h4>
+            </div>
+            <p class="group-desc">
+              金鑰加密保存在 Cloudflare 後台，前端 100% 絕不外洩；自動處理 CORS 並提供 10 分鐘邊緣極速快取。
+            </p>
+          </div>
+
+          <div class="input-with-action">
+            <input 
+              type="url" 
+              id="workerUrlInput" 
+              class="zen-modal-input" 
+              placeholder="https://cwa-weather-proxy.<子網域>.workers.dev" 
+              spellcheck="false" 
+              autocomplete="off"
+            />
+            <button id="btnTestWorker" class="zen-btn-primary" type="button">
+              <span>測試並儲存</span>
+            </button>
+          </div>
+          <div class="input-hint" id="workerTestFeedback">
+            💡 提示：部署完成後貼上您的 Worker 網址，點擊測試即可立即生效。
+          </div>
+        </div>
+
+        <!-- 分隔線 -->
+        <div class="modal-divider">
+          <span>或使用其他模式</span>
+        </div>
+
+        <!-- 選項 2：個人 CWA API 授權碼 -->
+        <div class="settings-group direct-key-group">
+          <div class="group-header">
+            <div class="group-title-row">
+              <span class="group-badge badge-cwa">直連模式</span>
+              <h4 class="group-title font-mincho">方案二：中央氣象署 CWA API 授權碼</h4>
+            </div>
+            <p class="group-desc">
+              僅儲存於您本地瀏覽器的 LocalStorage，直接連線氣象署開放資料平台。
+            </p>
+          </div>
+
+          <div class="input-with-action">
+            <input 
+              type="text" 
+              id="directApiKeyInput" 
+              class="zen-modal-input" 
+              placeholder="CWA-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" 
+              spellcheck="false" 
+              autocomplete="off"
+            />
+            <button id="btnSaveDirectKey" class="zen-btn-ghost" type="button">
+              <span>儲存授權碼</span>
+            </button>
+          </div>
+          <div class="input-hint" id="directKeyFeedback"></div>
+        </div>
+
+        <!-- 選項 3：重設/清除快取 -->
+        <div class="modal-footer-actions">
+          <button id="btnResetToSnapshot" class="zen-btn-text" type="button">
+            <span>🔄 重設為 GitHub Pages 預載快照模式</span>
+          </button>
+          <a href="./cloudflare-worker/README.md" target="_blank" class="zen-link-guide">
+            <span>📖 查看 3 分鐘 Cloudflare Worker 部署指南 ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet GIS Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- 主程式 -->
+  <script src="script.js"></script>
+</body>
+</html>
