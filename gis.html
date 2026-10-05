@@ -9,7 +9,7 @@
   <style>
     :root{--bg:#f4faff;--panel:#fff;--line:#dbeaf4;--blue:#1677ff;--cyan:#16b7d8;--text:#18364a;--muted:#6d8798}
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:linear-gradient(180deg,#eef8ff 0%,#f8fcff 100%);color:var(--text)}
-    .wrap{max-width:1280px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.title{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800}.sub{color:var(--muted);margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,select{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit}.btn{cursor:pointer}.btn:hover{border-color:#9ccfff;background:#f2f9ff}.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(26,91,130,.08);overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between}.tag{font-size:.78rem;color:#137b9a;background:#e8faff;border:1px solid #c6eef7;padding:4px 8px;border-radius:999px}.map{height:650px;background:#eaf3f8}.side{padding:16px}.label{font-size:.78rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}.city{font-size:2rem;font-weight:800;margin:6px 0}.meta{color:var(--muted);line-height:1.8}.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.city-btn{border:1px solid var(--line);background:#f9fcff;border-radius:10px;padding:9px;cursor:pointer}.city-btn.active{background:#e8f5ff;border-color:#6bb8ff;color:#075cab;font-weight:700}.leaflet-container{font-family:inherit}.leaflet-tooltip{font-weight:700}.back{display:inline-block;margin-top:16px;color:#146bc6;text-decoration:none}
+    .wrap{max-width:1280px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.title{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800}.sub{color:var(--muted);margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,select{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit}.btn{cursor:pointer}.btn:hover{border-color:#9ccfff;background:#f2f9ff}.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(26,91,130,.08);overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between}.tag{font-size:.78rem;color:#137b9a;background:#e8faff;border:1px solid #c6eef7;padding:4px 8px;border-radius:999px}.map{height:650px;background:#eaf3f8}.side{padding:16px}.label{font-size:.78rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}.city{font-size:2rem;font-weight:800;margin:6px 0}.meta{color:var(--muted);line-height:1.8}.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.city-btn{border:1px solid var(--line);background:#f9fcff;border-radius:10px;padding:9px;cursor:pointer}.city-btn.active{background:#e8f5ff;border-color:#6bb8ff;color:#075cab;font-weight:700}.leaflet-container{font-family:inherit}.leaflet-tooltip{font-weight:700}.back{display:inline-block;margin-top:16px;color:#146bc6;text-decoration:none}.sync-note{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef9ff;border:1px solid #cbeeff;color:#13708b;font-size:.86rem;line-height:1.5}
     .embed-mode body{background:#eef8ff;overflow:hidden}.embed-mode .wrap{max-width:none;padding:0}.embed-mode .top,.embed-mode .side{display:none}.embed-mode .grid{display:block}.embed-mode .card{border:0;border-radius:0;box-shadow:none}.embed-mode .head{display:none}.embed-mode .map{height:560px;min-height:560px}
     @media(max-width:850px){.grid{grid-template-columns:1fr}.map{height:520px}.top{align-items:flex-start;flex-direction:column}.side{order:-1}.embed-mode .map{height:520px;min-height:520px}}
   </style>
@@ -17,12 +17,12 @@
 <body>
 <div class="wrap">
   <div class="top">
-    <div><div class="title">台灣縣市 GIS 氣象地圖</div><div class="sub">Leaflet × OpenStreetMap｜點擊縣市標記即可切換</div></div>
+    <div><div class="title">台灣縣市 GIS 氣象地圖</div><div class="sub">Leaflet × OpenStreetMap｜點擊縣市標記會同步首頁天氣</div></div>
     <div class="actions"><select id="citySelect"></select><button class="btn" id="resetBtn">全台鳥瞰</button></div>
   </div>
   <div class="grid">
-    <section class="card"><div class="head"><span>GIS MAP / 全台 22 縣市</span><span class="tag">LIVE MAP</span></div><div id="map" class="map"></div></section>
-    <aside class="card"><div class="head"><span>SELECTED REGION</span><span class="tag" id="regionTag">中部地區</span></div><div class="side"><div class="label">目前選擇</div><div class="city" id="cityName">彰化縣</div><div class="meta" id="coord">24.082°N, 120.539°E</div><div class="city-grid" id="cityGrid"></div><a class="back" href="./">← 回首頁</a></div></aside>
+    <section class="card"><div class="head"><span>GIS MAP / 全台 22 縣市</span><span class="tag">WEATHER LINKED</span></div><div id="map" class="map"></div></section>
+    <aside class="card"><div class="head"><span>SELECTED REGION</span><span class="tag" id="regionTag">中部地區</span></div><div class="side"><div class="label">目前選擇</div><div class="city" id="cityName">彰化縣</div><div class="meta" id="coord">24.082°N, 120.539°E</div><div class="sync-note">點擊地圖標記、右側縣市按鈕或上方選單，首頁天氣卡、氣溫圖表與活動建議會同步切換。</div><div class="city-grid" id="cityGrid"></div><a class="back" href="./">← 回首頁</a></div></aside>
   </div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -33,14 +33,47 @@ const CITIES={
 '臺南市':[22.9997,120.2270,'南部地區'],'高雄市':[22.6273,120.3014,'南部地區'],'屏東縣':[22.5519,120.5487,'南部地區'],
 '宜蘭縣':[24.7021,121.7377,'東部地區'],'花蓮縣':[23.9872,121.6016,'東部地區'],'臺東縣':[22.7583,121.1444,'東部地區'],
 '澎湖縣':[23.5712,119.5793,'離島地區'],'金門縣':[24.4493,118.3766,'離島地區'],'連江縣':[26.1505,119.9499,'離島地區']};
+
+function hideParentGithubLink(){
+  try{
+    if(window.parent && window.parent!==window){
+      const pdoc=window.parent.document;
+      const githubLink=pdoc.querySelector('a[href*="github.com/ke60315-ux/0921"]');
+      if(githubLink) githubLink.remove();
+    }
+  }catch(e){}
+}
+
+function syncParentWeather(name){
+  try{
+    if(window.parent && window.parent!==window){
+      const pdoc=window.parent.document;
+      const parentSelect=pdoc.getElementById('citySelect');
+      if(parentSelect){
+        parentSelect.value=name;
+        parentSelect.dispatchEvent(new Event('change',{bubbles:true}));
+        return;
+      }
+    }
+  }catch(e){}
+  if(window.parent && window.parent!==window){
+    window.parent.postMessage({type:'gis-city-select',city:name},'*');
+  }
+}
+
+hideParentGithubLink();
+setTimeout(hideParentGithubLink,300);
+
 const map=L.map('map',{zoomControl:true}).setView([23.75,120.95],7);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
 const markers={}; let selected='彰化縣';
-Object.entries(CITIES).forEach(([name,[lat,lng]])=>{const m=L.circleMarker([lat,lng],{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}).addTo(map).bindTooltip(name,{direction:'top'});m.on('click',()=>selectCity(name,true));markers[name]=m;});
-const select=document.getElementById('citySelect'); Object.keys(CITIES).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)}); select.value=selected; select.onchange=e=>selectCity(e.target.value,true);
-const grid=document.getElementById('cityGrid'); Object.keys(CITIES).forEach(n=>{const b=document.createElement('button');b.className='city-btn';b.textContent=n;b.dataset.city=n;b.onclick=()=>selectCity(n,true);grid.appendChild(b)});
-function selectCity(name,fly){selected=name;const [lat,lng,region]=CITIES[name];document.getElementById('cityName').textContent=name;document.getElementById('coord').textContent=`${lat.toFixed(3)}°N, ${lng.toFixed(3)}°E`;document.getElementById('regionTag').textContent=region;select.value=name;document.querySelectorAll('.city-btn').forEach(b=>b.classList.toggle('active',b.dataset.city===name));Object.entries(markers).forEach(([n,m])=>m.setStyle(n===name?{radius:11,color:'#004f9e',weight:3,fillColor:'#36d1e8',fillOpacity:.9}:{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}));if(fly)map.flyTo([lat,lng],10,{duration:.8});}
-document.getElementById('resetBtn').onclick=()=>map.flyTo([23.75,120.95],7,{duration:.8});selectCity('彰化縣',false);setTimeout(()=>map.invalidateSize(),100);
+Object.entries(CITIES).forEach(([name,[lat,lng]])=>{const m=L.circleMarker([lat,lng],{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}).addTo(map).bindTooltip(name,{direction:'top'});m.on('click',()=>selectCity(name,true,true));markers[name]=m;});
+const select=document.getElementById('citySelect'); Object.keys(CITIES).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)}); select.value=selected; select.onchange=e=>selectCity(e.target.value,true,true);
+const grid=document.getElementById('cityGrid'); Object.keys(CITIES).forEach(n=>{const b=document.createElement('button');b.className='city-btn';b.textContent=n;b.dataset.city=n;b.onclick=()=>selectCity(n,true,true);grid.appendChild(b)});
+function selectCity(name,fly,notifyParent=true){if(!CITIES[name])return;selected=name;const [lat,lng,region]=CITIES[name];document.getElementById('cityName').textContent=name;document.getElementById('coord').textContent=`${lat.toFixed(3)}°N, ${lng.toFixed(3)}°E`;document.getElementById('regionTag').textContent=region;select.value=name;document.querySelectorAll('.city-btn').forEach(b=>b.classList.toggle('active',b.dataset.city===name));Object.entries(markers).forEach(([n,m])=>m.setStyle(n===name?{radius:11,color:'#004f9e',weight:3,fillColor:'#36d1e8',fillOpacity:.9}:{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}));if(fly)map.flyTo([lat,lng],10,{duration:.8});if(notifyParent)syncParentWeather(name);}
+document.getElementById('resetBtn').onclick=()=>map.flyTo([23.75,120.95],7,{duration:.8});
+window.addEventListener('message',e=>{const d=e.data;if(d&&d.type==='parent-city-select'&&CITIES[d.city])selectCity(d.city,true,false);});
+selectCity('彰化縣',false,false);setTimeout(()=>map.invalidateSize(),100);
 </script>
 </body>
 </html>
