@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>台灣縣市 GIS 地圖</title>
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed-mode');</script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <style>
     :root{--bg:#f4faff;--panel:#fff;--line:#dbeaf4;--blue:#1677ff;--cyan:#16b7d8;--text:#18364a;--muted:#6d8798}
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:linear-gradient(180deg,#eef8ff 0%,#f8fcff 100%);color:var(--text)}
     .wrap{max-width:1280px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.title{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800}.sub{color:var(--muted);margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,select{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit}.btn{cursor:pointer}.btn:hover{border-color:#9ccfff;background:#f2f9ff}.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(26,91,130,.08);overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between}.tag{font-size:.78rem;color:#137b9a;background:#e8faff;border:1px solid #c6eef7;padding:4px 8px;border-radius:999px}.map{height:650px;background:#eaf3f8}.side{padding:16px}.label{font-size:.78rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}.city{font-size:2rem;font-weight:800;margin:6px 0}.meta{color:var(--muted);line-height:1.8}.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.city-btn{border:1px solid var(--line);background:#f9fcff;border-radius:10px;padding:9px;cursor:pointer}.city-btn.active{background:#e8f5ff;border-color:#6bb8ff;color:#075cab;font-weight:700}.leaflet-container{font-family:inherit}.leaflet-tooltip{font-weight:700}.back{display:inline-block;margin-top:16px;color:#146bc6;text-decoration:none}
-    @media(max-width:850px){.grid{grid-template-columns:1fr}.map{height:520px}.top{align-items:flex-start;flex-direction:column}.side{order:-1}}
+    .embed-mode body{background:#eef8ff;overflow:hidden}.embed-mode .wrap{max-width:none;padding:0}.embed-mode .top,.embed-mode .side{display:none}.embed-mode .grid{display:block}.embed-mode .card{border:0;border-radius:0;box-shadow:none}.embed-mode .head{display:none}.embed-mode .map{height:560px;min-height:560px}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}.map{height:520px}.top{align-items:flex-start;flex-direction:column}.side{order:-1}.embed-mode .map{height:520px;min-height:520px}}
   </style>
 </head>
 <body>
