@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>台灣縣市 GIS 地圖</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    :root{--bg:#f4faff;--panel:#fff;--line:#dbeaf4;--blue:#1677ff;--cyan:#16b7d8;--text:#18364a;--muted:#6d8798}
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:linear-gradient(180deg,#eef8ff 0%,#f8fcff 100%);color:var(--text)}
+    .wrap{max-width:1280px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.title{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800}.sub{color:var(--muted);margin-top:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn,select{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 12px;font:inherit}.btn{cursor:pointer}.btn:hover{border-color:#9ccfff;background:#f2f9ff}.grid{display:grid;grid-template-columns:1fr 320px;gap:16px}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(26,91,130,.08);overflow:hidden}.head{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between}.tag{font-size:.78rem;color:#137b9a;background:#e8faff;border:1px solid #c6eef7;padding:4px 8px;border-radius:999px}.map{height:650px;background:#eaf3f8}.side{padding:16px}.label{font-size:.78rem;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}.city{font-size:2rem;font-weight:800;margin:6px 0}.meta{color:var(--muted);line-height:1.8}.city-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.city-btn{border:1px solid var(--line);background:#f9fcff;border-radius:10px;padding:9px;cursor:pointer}.city-btn.active{background:#e8f5ff;border-color:#6bb8ff;color:#075cab;font-weight:700}.leaflet-container{font-family:inherit}.leaflet-tooltip{font-weight:700}.back{display:inline-block;margin-top:16px;color:#146bc6;text-decoration:none}
+    @media(max-width:850px){.grid{grid-template-columns:1fr}.map{height:520px}.top{align-items:flex-start;flex-direction:column}.side{order:-1}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><div class="title">台灣縣市 GIS 氣象地圖</div><div class="sub">Leaflet × OpenStreetMap｜點擊縣市標記即可切換</div></div>
+    <div class="actions"><select id="citySelect"></select><button class="btn" id="resetBtn">全台鳥瞰</button></div>
+  </div>
+  <div class="grid">
+    <section class="card"><div class="head"><span>GIS MAP / 全台 22 縣市</span><span class="tag">LIVE MAP</span></div><div id="map" class="map"></div></section>
+    <aside class="card"><div class="head"><span>SELECTED REGION</span><span class="tag" id="regionTag">中部地區</span></div><div class="side"><div class="label">目前選擇</div><div class="city" id="cityName">彰化縣</div><div class="meta" id="coord">24.082°N, 120.539°E</div><div class="city-grid" id="cityGrid"></div><a class="back" href="./">← 回首頁</a></div></aside>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const CITIES={
+'臺北市':[25.0375,121.5637,'北部地區'],'新北市':[25.0124,121.4657,'北部地區'],'基隆市':[25.1317,121.7454,'北部地區'],'桃園市':[24.9936,121.3010,'北部地區'],'新竹市':[24.8039,120.9647,'北部地區'],'新竹縣':[24.8387,121.0177,'北部地區'],'苗栗縣':[24.5602,120.8214,'北部地區'],
+'臺中市':[24.1625,120.6470,'中部地區'],'彰化縣':[24.0815,120.5385,'中部地區'],'南投縣':[23.9610,120.9719,'中部地區'],'雲林縣':[23.7092,120.4313,'中部地區'],'嘉義市':[23.4801,120.4491,'中部地區'],'嘉義縣':[23.4518,120.2559,'中部地區'],
+'臺南市':[22.9997,120.2270,'南部地區'],'高雄市':[22.6273,120.3014,'南部地區'],'屏東縣':[22.5519,120.5487,'南部地區'],
+'宜蘭縣':[24.7021,121.7377,'東部地區'],'花蓮縣':[23.9872,121.6016,'東部地區'],'臺東縣':[22.7583,121.1444,'東部地區'],
+'澎湖縣':[23.5712,119.5793,'離島地區'],'金門縣':[24.4493,118.3766,'離島地區'],'連江縣':[26.1505,119.9499,'離島地區']};
+const map=L.map('map',{zoomControl:true}).setView([23.75,120.95],7);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+const markers={}; let selected='彰化縣';
+Object.entries(CITIES).forEach(([name,[lat,lng]])=>{const m=L.circleMarker([lat,lng],{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}).addTo(map).bindTooltip(name,{direction:'top'});m.on('click',()=>selectCity(name,true));markers[name]=m;});
+const select=document.getElementById('citySelect'); Object.keys(CITIES).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;select.appendChild(o)}); select.value=selected; select.onchange=e=>selectCity(e.target.value,true);
+const grid=document.getElementById('cityGrid'); Object.keys(CITIES).forEach(n=>{const b=document.createElement('button');b.className='city-btn';b.textContent=n;b.dataset.city=n;b.onclick=()=>selectCity(n,true);grid.appendChild(b)});
+function selectCity(name,fly){selected=name;const [lat,lng,region]=CITIES[name];document.getElementById('cityName').textContent=name;document.getElementById('coord').textContent=`${lat.toFixed(3)}°N, ${lng.toFixed(3)}°E`;document.getElementById('regionTag').textContent=region;select.value=name;document.querySelectorAll('.city-btn').forEach(b=>b.classList.toggle('active',b.dataset.city===name));Object.entries(markers).forEach(([n,m])=>m.setStyle(n===name?{radius:11,color:'#004f9e',weight:3,fillColor:'#36d1e8',fillOpacity:.9}:{radius:7,color:'#1677ff',weight:2,fillColor:'#38c8e8',fillOpacity:.72}));if(fly)map.flyTo([lat,lng],10,{duration:.8});}
+document.getElementById('resetBtn').onclick=()=>map.flyTo([23.75,120.95],7,{duration:.8});selectCity('彰化縣',false);setTimeout(()=>map.invalidateSize(),100);
+</script>
+</body>
+</html>
