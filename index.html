@@ -66,33 +66,25 @@
               <span class="brush-dot"></span>
               <span>全島地理風土図 / GEOSPATIAL MAP</span>
             </div>
-            
             <div class="map-action-btns">
-              <button id="btnResetView" class="zen-btn-sm" type="button" title="重設為台灣全島鳥瞰視角">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="9"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-                <span>全島鳥瞰</span>
-              </button>
-              <button id="btnToggleLayer" class="zen-btn-sm" type="button" title="切換和紙繪本 / 航空空照圖層">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-                <span id="layerNameText">航空空照</span>
-              </button>
+              <a class="zen-btn-sm" href="./gis.html" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+                <span>開啟全螢幕 GIS</span>
+              </a>
             </div>
           </div>
 
-          <!-- 地圖本體容器 -->
-          <div class="map-frame-wrapper">
-            <div id="gisMap" class="leaflet-map-target" role="region" aria-label="台灣互動氣象地圖"></div>
-            
+          <!-- 穩定版 GIS 地圖：直接嵌入已驗證可顯示的 OpenStreetMap 頁面 -->
+          <div class="map-frame-wrapper" style="min-height:560px;">
+            <iframe
+              src="./gis.html?embed=1"
+              title="台灣 22 縣市 GIS 互動地圖"
+              loading="eager"
+              referrerpolicy="strict-origin-when-cross-origin"
+              style="width:100%;height:560px;min-height:560px;border:0;display:block;background:#eef8ff;"
+            ></iframe>
             <div class="map-floating-tip">
-              <span class="tip-icon">🍃</span>
-              <span>點擊地圖標記・即時漫遊全島天候</span>
+              <span class="tip-icon">🗺️</span>
+              <span>點擊縣市標記・縮放與拖曳 GIS 地圖</span>
             </div>
           </div>
         </div>
